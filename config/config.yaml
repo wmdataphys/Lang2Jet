@@ -1,0 +1,75 @@
+seed: null  # Random seed for reproducibility
+data:
+  train_dir: /sciclone/home/hnayak/scr10/Transfer_Learning/data/jetclass_train_preprocessed.h5
+  val_dir: /sciclone/home/hnayak/scr10/Transfer_Learning/data/jetclass_val_preprocessed.h5
+  test_dir: /sciclone/home/hnayak/scr10/Transfer_Learning/data/jetclass_test_preprocessed.h5
+  n_load_train: 100
+  n_load_val: 20
+  n_load_test: null
+
+# Define mapping from decoded feature index to physical meaning (used during reconstruction from tokens)
+# This is a dictionary where the keys are the feature names and the values are their corresponding indices in the decoded output.
+# The indices should match the order of features in the input data.
+# The feature names should be consistent with the ones used in the data preprocessing step.
+feature_map:
+  part_pT: 0
+  part_etarel: 1
+  part_phirel: 2
+
+
+labels:
+  - "label_QCD"
+  # - "label_Hbb"
+  # - "label_Hcc"
+  # - "label_Hgg"
+  # - "label_H4q"
+  # - "label_Hqql"
+  # - "label_Zqq"
+  # - "label_Wqq"
+  - "label_Tbqq"
+  # - "label_Tbl"
+
+
+min_constituent: 10  # Minimum number of particles per jet
+scaling_factor: 1.0   # Scaling factor for feature normalization
+max_particles: 128    # Maximum particles per jet (padding/truncation)
+
+# --- model configuration ---
+run: 1
+task: classification 
+model_name: Custom_BERT_MLP_classifier_attention_pool_nonpadded_values_100K
+model_type: fix_backbone  # Options: fix_backbone, full_finetune, train_from_scratch
+fix_backbone: true
+use_preclassifier: false
+use_layer_norm: false
+use_top_data: false
+update_bias: false # Whether to update bias in the model parameters
+attention_pooling: true
+attend_only_nonpadded_values: false
+use_lightweight: false  # Change it to false if you want to use larger custom head (256 hidden units) (reproduce the results in the paper)
+finetune_weights_type: fix_backbone  # Options: train_from_scratch, fix_backbone, full_finetune
+input_dim: 3
+hidden_layer:  [256]  # [256, 512] # change hidden_layer to [] if use_lightweight is True
+output_dim: 768
+lr: 1e-4
+optimizer: adamw
+factor: 0.5
+patience: 10
+save_plots: true
+save_dir: output_dir/Custom_BERT_MLP_classifier_attention_pool_100
+save_cm: true
+onlytest: false
+best_model_path: Bestmodel_Custom_BERT_MLP_classifier_meanpool_fix_backbone_run1/model_full_2025-08-24_19-22-47/best_model.pt
+epochs: 80
+train_batch_size: 32 
+val_batch_size: 32
+test_batch_size: 32
+use_scheduler: true
+resume: false
+resume_checkpoint_path: Bestmodel_Custom_BERT_MLP_fix_backbone_run2/model_full_2025-06-25_12-51-14/last_checkpoint.pt
+debug: false
+
+
+
+
+

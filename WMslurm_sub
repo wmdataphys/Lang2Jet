@@ -1,0 +1,20 @@
+#!/bin/tcsh
+#SBATCH --export=ALL
+#SBATCH --job-name=__JOB_NAME__
+#SBATCH --nodes=1
+#SBATCH --tasks=1
+#SBATCH --gpus=1
+#SBATCH --mem=32GB
+#SBATCH -t 72:00:00
+#SBATCH --output=__OUTPUT__  # %j will be replaced by the job ID
+#SBATCH --error=__ERROR__    # %j will be replaced by the job ID
+
+cd $SLURM_SUBMIT_DIR
+
+module load miniforge3/24.9.2-0
+conda activate ROOT
+
+#python /sciclone/home/ksuresh/scr20/AI4PHY_LAB/Lang2Jet/Transfer_Learning_beta/train_iter_dataset_parquet.py --cfg __CFG__
+python __PYTHONSCRIPT__ --cfg __CFG__
+
+scontrol show job $SLURM_JOB_ID | grep JobState
